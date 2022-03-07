@@ -1,118 +1,74 @@
-#include <stdio.h>
-#include <ctype.h>
-
-#define MAXSTACK 100 /* for max size of stack */
-#define POSTFIXSIZE 100 /* define max number of charcters in postfix expression */
-
-/* declare stack and its top pointer to be used during postfix expression
-evaluation*/
-int stack[MAXSTACK];
-int top = -1; /* because array index in C begins at 0 */
-/* can be do this initialization somewhere else */
-
-/* define push operation */
-void push(int item)
+#include<stdio.h>
+void read(int a[]);
+void mergesort(int a[],int f,int l);
+void smerge(int a[],int f,int s,int t);
+void print(int a[],int n);
+void main()
 {
-
-    if (top >= MAXSTACK - 1) {
-        printf("stack over flow");
-        return;
-    }
-    else {
-        top = top + 1;
-        stack[top] = item;
-    }
+	int x[100];
+	read(x);
 }
-
-/* define pop operation */
-int pop()
+void read(int a[])
 {
-    int item;
-    if (top < 0) {
-        printf("stack under flow");
-    }
-    else {
-        item = stack[top];
-        top = top - 1;
-        return item;
-    }
+	int i,n,s,flag=0,key;
+	printf("Enter number of elements in the array=");
+	scanf("%d",&n);
+	printf("Enter array elements");
+	for(i=0;i<n;i++)
+		scanf("%d",&a[i]);
+	mergesort(a,0,(n-1));
+	print(a,n);
 }
-
-/* define function that is used to input postfix expression and to evaluate it */
-void EvalPostfix(char postfix[])
+void mergesort(int a[],int f,int l)
 {
-
-    int i;
-    char ch;
-    int val;
-    int A, B;
-
-    /* evaluate postfix expression */
-    for (i = 0; postfix[i] != ' '; i++) {
-        ch = postfix[i];
-        if (isdigit(ch)) {
-            /* we saw an operand,push the digit onto stack
-ch - '0' is used for getting digit rather than ASCII code of digit */
-            push(ch - '0');
-        }
-        else if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
-            /* we saw an operator
-* pop top element A and next-to-top elemnet B
-* from stack and compute B operator A
-*/
-            A = pop();
-            B = pop();
-
-            switch (ch) /* ch is an operator */
-            {
-            case '*':
-                val = B * A;
-                break;
-
-            case '/':
-                val = B / A;
-                break;
-
-            case '+':
-                val = B + A;
-                break;
-
-            case '-':
-                val = B - A;
-                break;
-            }
-
-            /* push the value obtained above onto the stack */
-            push(val);
-        }
-    }
-    printf(" \n Result of expression evaluation : %d \n", pop());
+	int m;
+	if(f<l)
+	{
+		m=(f+l)/2;
+		mergesort(a,f,m);
+		mergesort(a,(m+1),l);
+		smerge(a,f,(m+1),l);
+	}
 }
-
-int main()
+void smerge(int a[],int f,int s,int t)
 {
-
-    int i;
-
-    /* declare character array to store postfix expression */
-    char postfix[POSTFIXSIZE];
-    printf("ASSUMPTION: There are only four operators(*, /, +, -) in an expression and operand is single digit only.\n");
-    printf(" \nEnter postfix expression : ");
-
-    /* take input of postfix expression from user */
-
-    for (i = 0; i <= POSTFIXSIZE - 1; i++) {
-        scanf("%c", &postfix[i]);
-
-        if (postfix[i] ==' ') /* is there any way to eliminate this if */
-        {
-            break;
-        } /* and break statement */
-    }
-
-    /* call function to evaluate postfix expression */
-
-    EvalPostfix(postfix);
-
-    return 0;
+	int i=f,j=s,k=0,temp[10];
+	while(i<s && j<=t)
+		if(a[i]<a[j])
+		{
+			temp[k]=a[i];
+			i++;
+			k++;
+		}
+		else if(a[i]>a[j])
+		{
+			temp[k]=a[j];
+			k++;
+			j++;
+		}
+	while(i<s)
+	{
+		temp[k]=a[i];
+		i++;
+		k++;
+	}
+	while(j<=t)
+	{
+		temp[k]=a[j];
+		j++;
+		k++;
+	}
+	for(i=f,j=0;j<k;)
+	{
+		a[i]=temp[j];
+		j++;
+		i++;
+	}
+}
+void print(int a[],int n)
+{
+	int i;
+	printf("Sorted array");
+	for(i=0;i<n;i++)
+		printf("\n %d",a[i]);
 }
