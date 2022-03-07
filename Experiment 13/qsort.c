@@ -1,63 +1,94 @@
-#include<stdio.h>
-int i,j,n;
-void read(int a[],int n);
-void qsort(int a[],int l,int r);
-int partition(int a[],int l,int r);
-void swap(int *p,int *q);
-void display(int a[],int n);
-void main()
+// An iterative implementation of quick sort
+#include <stdio.h>
+
+// A utility function to swap two elements
+void swap(int* a, int* b)
 {
-	int x[50];
-	printf("Enter number of elements in the array:");
-	scanf("%d",&n);
-	read(x,n);
+	int t = *a;
+	*a = *b;
+	*b = t;
 }
-void read(int a[],int n)
+
+/* This function is same in both iterative and recursive*/
+int partition(int arr[], int l, int h)
 {
-	
-	printf("Enter array elements");
-	for(i=0;i<n;i++)
-		scanf("%d",&a[i]);
-	qsort(a,0,(n-1));
-	display(a,n);
-}
-void qsort(int a[],int l,int r)
-{
-	int pos;
-	if(l<r)
-	{
-		pos=partition(a,l,r);
-		qsort(a,l,(pos-1));
-		qsort(a,(pos+1),r);
-	}
-}
-int partition(int a[],int l,int r)
-{
-	l=0,r=n-1;
-	int i=l+1,j=r,key=a[l];
-	do
-	{
-		while(a[i]<key && i<r)
+	int x = arr[h];
+	int i = (l - 1);
+
+	for (int j = l; j <= h - 1; j++) {
+		if (arr[j] <= x) {
 			i++;
-		while(a[j]>key && j>l)
-			j--;
-		if(i<j)
-			swap(&a[i],&a[j]);
+			swap(&arr[i], &arr[j]);
+		}
 	}
-	while(i<j);
-	swap(&a[l],&a[j]);
-	return j;
+	swap(&arr[i + 1], &arr[h]);
+	return (i + 1);
 }
-void swap(int *p,int *q)
+
+/* A[] --> Array to be sorted,
+l --> Starting index,
+h --> Ending index */
+void quickSortIterative(int arr[], int l, int h)
 {
-	int temp;
-	temp=*p;
-	*p=*q;
-	*q=temp;
+	// Create an auxiliary stack
+	int stack[h - l + 1];
+
+	// initialize top of stack
+	int top = -1;
+
+	// push initial values of l and h to stack
+	stack[++top] = l;
+	stack[++top] = h;
+
+	// Keep popping from stack while is not empty
+	while (top >= 0) {
+		// Pop h and l
+		h = stack[top--];
+		l = stack[top--];
+
+		// Set pivot element at its correct position
+		// in sorted array
+		int p = partition(arr, l, h);
+
+		// If there are elements on left side of pivot,
+		// then push left side to stack
+		if (p - 1 > l) {
+			stack[++top] = l;
+			stack[++top] = p - 1;
+		}
+
+		// If there are elements on right side of pivot,
+		// then push right side to stack
+		if (p + 1 < h) {
+			stack[++top] = p + 1;
+			stack[++top] = h;
+		}
+	}
 }
-void display(int a[],int n)
+
+// A utility function to print contents of arr
+void printArr(int arr[], int n)
 {
-	printf("Sorted array is:");
-	for(i=0;i<n;i++)
-		printf("\n %d",a[i]);
+	int i;
+	for (i = 0; i <n; ++i)
+		printf("%d ", arr[i]);
+}
+
+// Driver program to test above functions
+int main()
+{
+	int arr[10],n;
+    printf("Enter the number of Elements:");
+    scanf("%d",&n);
+    printf("\nEnter the Elements:");
+    for(int i=0;i<n;i++)
+    {scanf("%d",&arr[i]);}
+    
+    for(int i=0;i<n;i++)
+    {printf("%d ",arr[i]);}
+
+    printf("\nSorted Element:");
+	quickSortIterative(arr, 0, n-1 );
+	printArr(arr, n);
+	return 0;
 }
