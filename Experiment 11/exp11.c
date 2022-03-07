@@ -1,243 +1,63 @@
 #include<stdio.h>
-
-#include<stdlib.h>
-
-#include<math.h>
-
-#include <string.h>
-
-char infix_string[20], postfix_string[20];
-
-int top; int stack[20]; int pop();
-
-int precedence(char symbol);
-
-int isEmpty();
-
-void infix_to_postfix();
-
-int check_space(char symbol);
-
-void push(long int symbol);
-
-int main()
-
+int i,j,n;
+void read(int a[],int n);
+void qsort(int a[],int l,int r);
+int partition(int a[],int l,int r);
+void swap(int *p,int *q);
+void display(int a[],int n);
+void main()
 {
-
-    int count, length;
-
-    char temp;
-
-    top = -1;
-
-    printf("\nINPUT THE INFIX EXPRESSION : ");
-
-    scanf("%s", infix_string);
-
-    infix_to_postfix();
-
-    printf("\nEQUIVALENT POSTFIX EXPRESSION : %s\n", postfix_string);
-
-    return 0;
-
+	int x[50];
+	printf("Enter number of elements in the array:");
+	scanf("%d",&n);
+	read(x,n);
 }
-
-void infix_to_postfix()
-
+void read(int a[],int n)
 {
-
-    unsigned int count, temp = 0;
-
-    char next;
-
-    char symbol;
-
-    for(count = 0; count < strlen(infix_string); count++)
-
-    {
-
-        symbol = infix_string[count];   // Scanning the input expression
-
-        if(!check_space(symbol))
-
-        {
-
-            switch(symbol)
-
-            {
-
-                case '(': push(symbol);
-
-                    break;
-
-                case ')':
-
-                    while((next = pop()) != '(')     // pop until '(' is encountered
-
-                    {
-
-                        postfix_string[temp++] = next;
-
-                    }
-
-                    break;
-
-                case '+':
-
-                case '-':
-
-                case '*':
-
-                case '/':
-
-                case '%':
-
-                case '^':
-
-                    while(!isEmpty() && precedence(stack[top]) >= precedence(symbol))   // Check precedence and push the higher one
-
-                        postfix_string[temp++] = pop();
-
-                    push(symbol);
-
-                    break;
-
-                default:
-
-                    postfix_string[temp++] = symbol;
-
-            }
-
-        }
-
-    }
-
-    while(!isEmpty())
-
-    {
-
-        postfix_string[temp++] = pop();
-
-    }
-
-    postfix_string[temp] = '\0';
-
+	
+	printf("Enter array elements");
+	for(i=0;i<n;i++)
+		scanf("%d",&a[i]);
+	qsort(a,0,(n-1));
+	display(a,n);
 }
-
-int precedence(char symbol)
-
+void qsort(int a[],int l,int r)
 {
-
-    switch(symbol)
-
-    {
-
-        case '(': return 0;
-
-        case '+':
-
-        case '-':
-
-            return 1;
-
-        case '*':
-
-        case '/':
-
-        case '%':
-
-            return 2;
-
-        case '^':
-
-            return 3;
-
-        default:
-
-            return 0;
-
-    }
-
+	int pos;
+	if(l<r)
+	{
+		pos=partition(a,l,r);
+		qsort(a,l,(pos-1));
+		qsort(a,(pos+1),r);
+	}
 }
-
-int check_space(char symbol)
-
+int partition(int a[],int l,int r)
 {
-
-    if(symbol == '\t' || symbol == ' ' )
-
-    {
-
-        return 1;
-
-    }
-
-    else
-
-    {
-
-        return 0;
-
-    }
-
+	l=0,r=n-1;
+	int i=l+1,j=r,key=a[l];
+	do
+	{
+		while(a[i]<key && i<r)
+			i++;
+		while(a[j]>key && j>l)
+			j--;
+		if(i<j)
+			swap(&a[i],&a[j]);
+	}
+	while(i<j);
+	swap(&a[l],&a[j]);
+	return j;
 }
-
-void push(long int symbol)
-
+void swap(int *p,int *q)
 {
-
-    if(top > 20)
-
-    {
-
-        printf("Stack Overflow\n");
-
-        exit(1);
-
-    }
-
-    top = top + 1;
-
-    stack[top] = symbol;    // Push the symbol and make it as TOP
-
+	int temp;
+	temp=*p;
+	*p=*q;
+	*q=temp;
 }
-
-int isEmpty()
-
+void display(int a[],int n)
 {
-
-    if(top == -1)
-
-    {
-
-        return 1;
-
-    }
-
-    else
-
-    {
-
-        return 0;
-
-    }
-
-}
-
-int pop()
-
-{
-
-    if(isEmpty())
-
-    {
-
-        printf("Stack is Empty\n");
-
-        exit(1);
-
-    }
-
-    return(stack[top--]);  // Pop the symbol and decrement TOP
-
+	printf("Sorted array is:");
+	for(i=0;i<n;i++)
+		printf("\n %d",a[i]);
 }
