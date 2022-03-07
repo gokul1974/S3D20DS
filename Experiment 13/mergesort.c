@@ -1,74 +1,76 @@
-#include<stdio.h>
-void read(int a[]);
-void mergesort(int a[],int f,int l);
-void smerge(int a[],int f,int s,int t);
-void print(int a[],int n);
-void main()
+#include <stdio.h>
+#define MAX 30
+
+int main()
 {
-	int x[100];
-	read(x);
-}
-void read(int a[])
-{
-	int i,n,s,flag=0,key;
-	printf("Enter number of elements in the array=");
+	int arr[MAX],temp[MAX],i,j,k,n,size,l1,h1,l2,h2;
+
+	printf("Enter the number of elements : ");
 	scanf("%d",&n);
-	printf("Enter array elements");
+
 	for(i=0;i<n;i++)
-		scanf("%d",&a[i]);
-	mergesort(a,0,(n-1));
-	print(a,n);
-}
-void mergesort(int a[],int f,int l)
-{
-	int m;
-	if(f<l)
 	{
-		m=(f+l)/2;
-		mergesort(a,f,m);
-		mergesort(a,(m+1),l);
-		smerge(a,f,(m+1),l);
+		printf("Enter element %d : ",i+1);
+		scanf("%d",&arr[i]);
 	}
-}
-void smerge(int a[],int f,int s,int t)
-{
-	int i=f,j=s,k=0,temp[10];
-	while(i<s && j<=t)
-		if(a[i]<a[j])
+
+	printf("Unsorted list is : ");
+	for( i = 0 ; i<n ; i++)
+		printf("%d ", arr[i]);
+
+	/*l1 lower bound of first pair and so on*/
+	for(size=1; size < n; size=size*2 )
+	{
+		l1=0;
+		k=0;  /*Index for temp array*/
+		while( l1+size < n)
 		{
-			temp[k]=a[i];
-			i++;
-			k++;
-		}
-		else if(a[i]>a[j])
-		{
-			temp[k]=a[j];
-			k++;
-			j++;
-		}
-	while(i<s)
-	{
-		temp[k]=a[i];
-		i++;
-		k++;
-	}
-	while(j<=t)
-	{
-		temp[k]=a[j];
-		j++;
-		k++;
-	}
-	for(i=f,j=0;j<k;)
-	{
-		a[i]=temp[j];
-		j++;
-		i++;
-	}
-}
-void print(int a[],int n)
-{
-	int i;
-	printf("Sorted array");
-	for(i=0;i<n;i++)
-		printf("\n %d",a[i]);
-}
+			h1=l1+size-1;
+			l2=h1+1;
+			h2=l2+size-1;
+			/* h2 exceeds the limlt of arr */
+			if( h2>=n ) 
+				h2=n-1;
+			
+			/*Merge the two pairs with lower limits l1 and l2*/
+			i=l1;
+			j=l2;
+			
+			while(i<=h1 && j<=h2 )
+			{
+				if( arr[i] <= arr[j] )
+					temp[k++]=arr[i++];
+				else
+					temp[k++]=arr[j++];
+			}
+			
+			while(i<=h1)
+				temp[k++]=arr[i++];
+			while(j<=h2)
+				temp[k++]=arr[j++];
+			/**Merging completed**/
+			/*Take the next two pairs for merging */
+			l1=h2+1; 
+		}/*End of while*/
+
+		/*any pair left */
+		for(i=l1; k<n; i++) 
+			temp[k++]=arr[i];
+
+		for(i=0;i<n;i++)
+			arr[i]=temp[i];
+
+		printf("\nSize=%d \nElements are : ",size);
+		for( i = 0 ; i<n ; i++)
+			printf("%d ", arr[i]);
+		
+	}/*End of for loop */
+	
+	printf("\nSorted list is :\n");
+	for( i = 0 ; i<n ; i++)
+		printf("%d ", arr[i]);
+	
+	printf("\n");
+	
+	return 0;
+}/*End of main()*/
